@@ -56,7 +56,7 @@ jobs:
           name: vmecpp-wheels-${{ matrix.os }}
           path: ./wheelhouse/*.whl
 
-  pypi-publish:
+  publish:
     name: Publish wheels to PyPI
     if: github.event_name == 'release'
     needs: main
