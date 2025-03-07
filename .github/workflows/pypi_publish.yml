@@ -17,12 +17,19 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: manylinux_x86_64
+            shell: bash
           - os: macos-13
             arch: macosx_x86_64
+            shell: bash
           - os: macos-14
             arch: macosx_arm64
+            shell: bash
           - os: windows-latest
             arch: win_amd64
+            shell: msys2 {0}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
 
     steps:
       - name: Checkout repository
@@ -47,11 +54,6 @@ jobs:
             nlohmann-json:p
             netcdf:p
             hdf5:p
-            
-      - name: Set git to use LF (Windows only)
-        if: runner.os == 'Windows'
-        run: |
-          git config --global core.autocrlf input
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.0
@@ -69,6 +71,8 @@ jobs:
             DYLD_LIBRARY_PATH=/usr/local/opt/gcc/lib/gcc/current/:$DYLD_LIBRARY_PATH
             FC=gfortran-14
             HDF5_ROOT=$(brew --prefix hdf5)
+          CIBW_BEFORE_BUILD_WINDOWS: |
+            git config --global core.autocrlf input
           CIBW_BUILD_FRONTEND: "build"
         with:
           package-dir: .
