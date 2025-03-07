@@ -46,8 +46,12 @@ jobs:
           install: >-
             git
             base-devel
+            zlib-devel
+            libcurl-devel
+            libzstd-devel
           pacboy: >-
             toolchain:p
+            cmake:p
             llvm-openmp:p
             lapack:p
             eigen3:p
