@@ -73,6 +73,8 @@ jobs:
             HDF5_ROOT=$(brew --prefix hdf5)
           CIBW_BEFORE_BUILD_WINDOWS: |
             git config --global core.autocrlf input
+          CIBW_ENVIRONMENT_WINDOWS: >
+            SKBUILD_CMAKE_ARGS="-G 'MinGW Makefiles';"
           CIBW_BUILD_FRONTEND: "build"
         with:
           package-dir: .
