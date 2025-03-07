@@ -53,7 +53,26 @@ jobs:
             eigen3:p
             nlohmann-json:p
             netcdf:p
-            hdf5:p
+
+      - name: Build and Install HDF5
+        if: runner.os == 'Windows'
+        run: |
+          cd $GITHUB_WORKSPACE
+          git clone --depth 1 https://github.com/HDFGroup/hdf5.git -b develop
+          cd hdf5
+          mkdir build
+          cd build
+          cmake .. \
+            -G "Ninja" \
+            -DCMAKE_INSTALL_PREFIX=/c/hdf5 \
+            -DBUILD_SHARED_LIBS=ON \
+            -DHDF5_BUILD_CPP_LIB=OFF \
+            -DHDF5_BUILD_FORTRAN=OFF \
+            -DHDF5_BUILD_JAVA=OFF \
+            -DHDF5_BUILD_DOC=OFF \
+            -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --config Release
+          cmake --install . --config Release
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.0
@@ -74,7 +93,7 @@ jobs:
           CIBW_BEFORE_BUILD_WINDOWS: |
             git config --global core.autocrlf input
           CIBW_ENVIRONMENT_WINDOWS: >
-            SKBUILD_CMAKE_ARGS="-G MinGW Makefiles;"
+            SKBUILD_CMAKE_ARGS="-G Ninja;"
           CIBW_BUILD_FRONTEND: "build"
         with:
           package-dir: .
